@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 const Sidebar = (props) => {
 
-  const playlists = props.playlists;
+  const playlists = props.playlists.playlists;
 
   return (
     <sidebar>

@@ -12,6 +12,7 @@ import Player from '../components/Player';
 
 import Store from '../store';
 import { toggle, toggleOne, load, startSong, play, pause, next, prev } from '../action-creators/player';
+import { fetchAlbumFromServer, fetchAlbumsFromServer } from '../action-creators/albums';
 
 import { convertAlbum, convertAlbums, convertSong, skip } from '../utils';
 
@@ -95,11 +96,7 @@ export default class AppContainer extends Component {
   }
 
   selectAlbum (albumId) {
-    axios.get(`/api/albums/${albumId}`)
-      .then(res => res.data)
-      .then(album => this.setState({
-        selectedAlbum: convertAlbum(album)
-      }));
+    Store.dispatch(fetchAlbumFromServer(albumId));
   }
 
   selectArtist (artistId) {
@@ -192,6 +189,7 @@ render () {
           next={this.next}
           prev={this.prev}
           toggle={this.toggle}
+          selectAlbum={this.selectAlbum}
         />
       </div>
    );
