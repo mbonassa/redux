@@ -3,7 +3,8 @@ import { Link } from 'react-router';
 
 const Sidebar = (props) => {
 
-  const playlists = props.playlists.playlists;
+  const playlists = props.playlists;
+  console.log(playlists)
 
   return (
     <sidebar>
@@ -34,7 +35,8 @@ const Sidebar = (props) => {
       </section>
       <hr />
       <ul className="list-unstyled">
-        {
+         {
+          /*
           playlists.map(playlist => {
             return (
             <li key={playlist.id} className="playlist-item menu-item">
@@ -42,6 +44,7 @@ const Sidebar = (props) => {
             </li>
             );
           })
+          */
         }
       </ul>
     </sidebar>
