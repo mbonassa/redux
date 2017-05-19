@@ -40,16 +40,10 @@ export default class LyricsContainer extends Component {
       event.preventDefault();
         if (this.state.artistQuery && this.state.songQuery) {
 
-
-          axios.get(`/api/lyrics/${this.state.artistQuery}/${this.state.songQuery}`)
-                .then(response => {
-                  const setLyricsAction = setLyrics(response.data.lyric);
-                  store.dispatch(setLyricsAction);
-                });
-        // axios.get(`/api/lyrics/${this.state.artistQuery}/${this.state.songQuery}`)
-        // .then(res => res.data)
-        // .then(obj => setLyrics(obj.lyric))
-        // .then(lyric => Store.dispatch(lyric))
+        axios.get(`/api/lyrics/${this.state.artistQuery}/${this.state.songQuery}`)
+        .then(res => res.data)
+        .then(obj => setLyrics(obj.lyric))
+        .then(lyric => Store.dispatch(lyric))
       }
     }
 
