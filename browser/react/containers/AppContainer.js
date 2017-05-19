@@ -10,13 +10,16 @@ import Album from '../components/Album';
 import Sidebar from '../components/Sidebar';
 import Player from '../components/Player';
 
+import Store from '../store';
+import { toggle, toggleOne, load, startSong, play, pause, next, prev } from '../action-creators/player';
+
 import { convertAlbum, convertAlbums, convertSong, skip } from '../utils';
 
 export default class AppContainer extends Component {
 
   constructor (props) {
     super(props);
-    this.state = initialState;
+    this.state = Object.assign(initialState, Store.getState());
 
     this.toggle = this.toggle.bind(this);
     this.toggleOne = this.toggleOne.bind(this);
@@ -56,47 +59,35 @@ export default class AppContainer extends Component {
   }
 
   play () {
-    AUDIO.play();
-    this.setState({ isPlaying: true });
+    Store.dispatch(play());
   }
 
   pause () {
-    AUDIO.pause();
-    this.setState({ isPlaying: false });
+    Store.dispatch(pause());
   }
 
   load (currentSong, currentSongList) {
-    AUDIO.src = currentSong.audioUrl;
-    AUDIO.load();
-    this.setState({
-      currentSong: currentSong,
-      currentSongList: currentSongList
-    });
+    Store.dispatch(load(currentSong, currentSongList));
   }
 
   startSong (song, list) {
-    this.pause();
-    this.load(song, list);
-    this.play();
+    Store.dispatch(startSong(song, list));
   }
 
   toggleOne (selectedSong, selectedSongList) {
-    if (selectedSong.id !== this.state.currentSong.id)
-      this.startSong(selectedSong, selectedSongList);
-    else this.toggle();
+    Store.dispatch(toggleOne(selectedSong, selectedSongList));
   }
 
   toggle () {
-    if (this.state.isPlaying) this.pause();
-    else this.play();
+    Store.dispatch(toggle());
   }
 
   next () {
-    this.startSong(...skip(1, this.state));
+    Store.dispatch(next());
   }
 
   prev () {
-    this.startSong(...skip(-1, this.state));
+    Store.dispatch(prev());
   }
 
   setProgress (progress) {
@@ -183,39 +174,26 @@ export default class AppContainer extends Component {
       });
   }
 
-  render () {
-
-    const props = Object.assign({}, this.state, {
-      toggleOne: this.toggleOne,
-      toggle: this.toggle,
-      selectAlbum: this.selectAlbum,
-      selectArtist: this.selectArtist,
-      addPlaylist: this.addPlaylist,
-      selectPlaylist: this.selectPlaylist,
-      loadSongs: this.loadSongs,
-      addSongToPlaylist: this.addSongToPlaylist
-    });
-
+render () {
     return (
       <div id="main" className="container-fluid">
         <div className="col-xs-2">
           <Sidebar playlists={this.state.playlists} />
         </div>
         <div className="col-xs-10">
-        {
-          this.props.children && React.cloneElement(this.props.children, props)
-        }
+        {/* Note that we are no longer passing new down from App, so no need to use React.cloneElement */}
+        { this.props.children }
         </div>
         <Player
-          currentSong={this.state.currentSong}
-          currentSongList={this.state.currentSongList}
-          isPlaying={this.state.isPlaying}
+          currentSong={this.state.player.currentSong}
+          currentSongList={this.state.player.currentSongList}
+          isPlaying={this.state.player.isPlaying}
           progress={this.state.progress}
           next={this.next}
           prev={this.prev}
           toggle={this.toggle}
         />
       </div>
-    );
+   );
   }
 }
